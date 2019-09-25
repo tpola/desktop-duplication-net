@@ -1,4 +1,5 @@
 ﻿using SharpDX.DXGI;
+using SharpDX.Mathematics.Interop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace DesktopDuplication
     {
         public byte[] PtrShapeBuffer;
         public OutputDuplicatePointerShapeInformation ShapeInfo;
-        public SharpDX.Point Position;
+        public RawPoint Position;
         public bool Visible;
         public int BufferSize;
         public int WhoUpdatedPositionLast;
