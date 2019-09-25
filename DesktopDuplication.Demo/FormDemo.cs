@@ -29,6 +29,7 @@ namespace DesktopDuplication.Demo
             }
         }
 
+
         private void FormDemo_Shown(object sender, EventArgs e)
         {
             while (true)
@@ -64,8 +65,60 @@ namespace DesktopDuplication.Demo
                     //    UpdatedRegion.Size = updated.Size;
                     //}
                     this.BackgroundImage = frame.DesktopImage;
+                    fps++;
                 }
             }
         }
+
+
+        private void TimerDXGI_Tick(object sender, EventArgs e)
+        {
+            var s = Stopwatch.StartNew();
+            DesktopFrame frame = null;
+            try
+            {
+                frame = desktopDuplicator.GetLatestFrame();
+            }
+            catch
+            {
+                desktopDuplicator = new DesktopDuplicator(0);
+            }
+            if (frame != null)
+            {
+                this.BackgroundImage = frame.DesktopImage;
+            }
+            fps++;
+            tim += s.ElapsedMilliseconds;
+        }
+
+
+
+
+        private void TimerGDI_Tick(object sender, EventArgs e)
+        {
+            var s = Stopwatch.StartNew();
+
+            var screen = Screen.AllScreens[0];
+            var bounds = screen.Bounds;
+            var bitmap = new Bitmap(bounds.Width, bounds.Height);
+
+            using (var g = Graphics.FromImage(bitmap))
+                g.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size);
+
+            var prev = BackgroundImage;
+            this.BackgroundImage = bitmap;
+            prev?.Dispose();
+
+            fps++;
+            tim += s.ElapsedMilliseconds;
+        }
+
+        private void TimerStat_Tick(object sender, EventArgs e)
+        {
+            labelStat.Text = $"fps:  {fps}\ntime: {tim/fps:0.0}";
+            tim = fps = 0;
+        }
+        int fps;
+        double tim;
     }
 }
